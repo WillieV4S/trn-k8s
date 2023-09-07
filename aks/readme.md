@@ -177,5 +177,5 @@ az aks delete --resource-group mentor-aks --name mentoraks --yes
 1. AKS erőforráscsoport törlése
 
 ```bash
-az group delete --name mentor-aks --location northeurope -f -y --no-wait
+az group delete --name mentor-aks -y --no-wait
 ```
