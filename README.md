@@ -18,7 +18,17 @@ Segédanyagok:
 ```bash
 docker build --tag cloudsteak/node-webapp --platform linux/amd64 .
 ```
+
 4. Ellenőrizd a végeredmélnyt
+
+5. Helyi futtatás
+```bash
+ docker run -d -p 80:8080 cloudsteak/node-webapp:latest 
+```
+
+6. Böngészőben nyisd meg: http://localhost:80
+
+
 
 ## Kubernetes a különböző felhőszolgáltatóknál
 

@@ -1,39 +1,39 @@
-# trn-node-demo.yaml
+# node-webapp.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: trn-node-demo
+  name: node-webapp-deployment
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: trn-node-demo-deployment
+      app: node-webapp-app
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: trn-node-demo-deployment
+        app: node-webapp-app
     spec:
       containers:
-        - image: azurehaladoacr.azurecr.io/trn-node-demo-docker:latest
-          name: trn-node-demo
+        - image: mentoracr.azurecr.io/node-webapp-docker:latest
+          name: node-webapp
           ports:
             - containerPort: 8080
-              name: trn-node-demo
+              name: node-webapp
           resources:
             requests:
               cpu: "0.3"
               memory: "64Mi"
             limits:
-              cpu: "2"
-              memory: "2Gi"
+              cpu: "0.5"
+              memory: "128Mi"
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: trn-node-demo-loadbalancer
+  name: node-webapp-loadbalancer
 spec:
   type: LoadBalancer
   ports:
@@ -41,4 +41,4 @@ spec:
       port: 80
       targetPort: 8080
   selector:
-    app: trn-node-demo-deployment
+    app: node-webapp-app

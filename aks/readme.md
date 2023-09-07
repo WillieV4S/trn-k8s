@@ -4,7 +4,7 @@
 ## Docker image build
 
 ```
-docker build --tag cloudsteak/trn-node-demo-docker . --platform linux/amd64
+docker build --tag cloudsteak/node-webapp . --platform linux/amd64
 ```
 
 ## Erőforráscsoportok
@@ -12,13 +12,13 @@ docker build --tag cloudsteak/trn-node-demo-docker . --platform linux/amd64
 #### ACR Resource Group
 
 ```bash
-az group create --name mentorklub2023 --location northeurope
+az group create --name mentor-acr --location northeurope
 ```
 
 #### AKS Resource Group
 
 ```bash
-az group create --name eszak-europa-k8s --location northeurope
+az group create --name mentor-aks --location northeurope
 ```
 
 ### ACR kezelés
@@ -26,7 +26,7 @@ az group create --name eszak-europa-k8s --location northeurope
 #### ACR létrehozás
 
 ```bash
-az acr create --resource-group mentorklub2023 --name mentorklubacr --sku Basic
+az acr create --resource-group mentor-acr --name mentoracr --sku Basic
   ```
 
 
@@ -35,34 +35,34 @@ az acr create --resource-group mentorklub2023 --name mentorklubacr --sku Basic
 Már be kell jelentkezve lenned a megfelelő Azure előfizetésbe!
 
 ```
-az acr login --name mentorklubacr
+az acr login --name mentoracr
 ```
 
 
 #### TAG docker images: ACR
 
 ```
-docker tag cloudsteak/trn-node-demo-docker:latest mentorklubacr.azurecr.io/trn-node-demo-docker:latest
-docker tag cloudsteak/trn-node-demo-docker:latest mentorklubacr.azurecr.io/trn-node-demo-docker:1.0
+docker tag cloudsteak/node-webapp:latest mentoracr.azurecr.io/node-webapp:latest
+docker tag cloudsteak/node-webapp:latest mentoracr.azurecr.io/node-webapp:1.0
 ```
 
 #### Kép feltöltése ACR-be
 
 ```
-docker push mentorklubacr.azurecr.io/trn-node-demo-docker:latest
-docker push mentorklubacr.azurecr.io/trn-node-demo-docker:1.0
+docker push mentoracr.azurecr.io/node-webapp:latest
+docker push mentoracr.azurecr.io/node-webapp:1.0
 ```
 
 ## AKS Cluster létrehozás
 
 ```
-az aks create --resource-group eszak-europa-k8s --name azurehaladoaks --node-count 2 --generate-ssh-keys --attach-acr mentorklubacr --node-vm-size Standard_B2ms
+az aks create --resource-group mentor-aks --name mentoraks --node-count 1 --generate-ssh-keys --attach-acr mentoracr --node-vm-size Standard_B2ms
 ```
 
 ## AKS cluster credential letöltése
 
 ```
-az aks get-credentials --resource-group eszak-europa-k8s --name azurehaladoaks
+az aks get-credentials --resource-group mentor-aks --name mentoraks
 ```
 
 ## AKS cluster kezelés
@@ -88,7 +88,7 @@ kubectl config current-context
 #### Másik kapcsolat aktualizálása
 
 ```
-kubectl config use-context azurehaladoaks
+kubectl config use-context mentoraks
 ```
 
 
@@ -97,43 +97,63 @@ kubectl config use-context azurehaladoaks
 ### Névtér létrehozás
 
 ```
-kubectl create namespace trn-node-demo
+kubectl create namespace live
 ```
 
 ## Alapértelmezett névtér
 
 ```
-kubectl config set-context --current --namespace=trn-node-demo
+kubectl config set-context --current --namespace=live
 ```
 
-## trn-node-demo alkalmazás létrehozása
+## Node-WebApp alkalmazás létrehozása
 
 ```
-kubectl apply -f aks/trn-node-demo.yaml --namespace trn-node-demo
+kubectl apply -f aks/live.yaml --namespace live
 ```
 
-# Automatikus skálázás beállítása
+### Monitoring engedélyezése
 
-```
-kubectl autoscale deployment trn-node-demo --cpu-percent=60 --min=2 --max=10 -n trn-node-demo
-```
+Ha a következő hibaüzenetet kapjuk: `error: Metrics API not available`
 
-## Check it
-
-```
-kubectl get hpa -n trn-node-demo
+```bash
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 ```
 
-# Erőforrás ellenőrzés
+### Teljesítmény lekérdezések
 
-## Aktuális CPU és Memory használat mindegyik névtérben
+```bash
+# Node szerverek CPU és Memória használata
+kubectl top nodes
 
-```kubectl top pods --all-namespaces```
+# POD-ok CPU és Memória használata
+kubectl top pods --all-namespaces
+```
 
-## Aktuális CPU és Memory használat mindegyik névtérben - CPU használat szerint csökkenő sorrendben
+### POD-ok lekérdezése egy névtérből
 
-```kubectl top pods --all-namespaces | sort --key 2 -b | awk 'NR<2{print $0;next}{print $0| "sort --key 3 --numeric -b --reverse"}'```
+```bash
+kubectl -n live get pods
+```
 
-## Aktuális CPU és Memory használat mindegyik névtérben - Memória használat szerint csökkenő sorrendben
+### Skálázás
 
-```kubectl top pods --all-namespaces | sort --key 2 -b | awk 'NR<2{print $0;next}{print $0| "sort --key 4 --numeric -b --reverse"}'```
+```bash
+# Több POD manuálisan
+kubectl -n live scale --replicas=5 deployment node-webapp-deployment
+
+# Kevesebb POD manuálisan
+kubectl -n live scale --replicas=1 deployment node-webapp-deployment
+```
+
+### Minden erőforrás egy névtéren belül
+
+```bash
+kubectl -n live get all
+```
+
+### Névtér törlése (minden erőforrással együtt!)
+
+```bash
+kubectl delete ns live
+```
