@@ -111,6 +111,16 @@ kubectl config set-context --current --namespace=live
 kubectl apply -f https://raw.githubusercontent.com/cloudsteak/trn-k8s/main/aks/node-webapp.yaml --namespace live
 ```
 
+## Telepítés ellenőrzése
+
+```bash
+kubectl get svc
+
+kubectl get deployment
+
+kubectl get pods
+```
+
 ### Monitoring engedélyezése
 
 Ha a következő hibaüzenetet kapjuk: `error: Metrics API not available`
@@ -139,10 +149,10 @@ kubectl -n live get pods
 
 ```bash
 # Több POD manuálisan
-kubectl -n live scale --replicas=5 deployment node-webapp-deployment
+kubectl -n live scale --replicas=5 deployment node-webapp-app
 
 # Kevesebb POD manuálisan
-kubectl -n live scale --replicas=1 deployment node-webapp-deployment
+kubectl -n live scale --replicas=1 deployment node-webapp-app
 ```
 
 ### Minden erőforrás egy névtéren belül
