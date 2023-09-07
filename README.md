@@ -2,6 +2,8 @@
 
 Kubernetes példa alkalmazás több felhőszolgáltatóhoz.
 
+Összes segédanyag: https://github.com/cloudsteak/mentor-klub-cloud
+
 Segédanyagok:
 
 - https://github.com/cloudsteak/trn-node-docker-demo/blob/main/docs/docker-alapok.md
