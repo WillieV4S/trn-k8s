@@ -24,3 +24,4 @@ docker build --tag cloudsteak/node-webapp --platform linux/amd64 .
 
 ### AKS - Azure
 
+[Azure AKS](./aks/readme.md)
