@@ -1,5 +1,4 @@
-# AKS 
-
+# AKS
 
 ## Docker image build
 
@@ -27,8 +26,7 @@ az group create --name mentor-aks --location northeurope
 
 ```bash
 az acr create --resource-group mentor-acr --name mentoracr --sku Basic
-  ```
-
+```
 
 #### Bejelentkezés ACR-be
 
@@ -37,7 +35,6 @@ Már be kell jelentkezve lenned a megfelelő Azure előfizetésbe!
 ```
 az acr login --name mentoracr
 ```
-
 
 #### TAG docker images: ACR
 
@@ -121,6 +118,8 @@ kubectl get deployment
 kubectl get pods
 ```
 
+## Egyéb
+
 ### Monitoring engedélyezése
 
 Ha a következő hibaüzenetet kapjuk: `error: Metrics API not available`
@@ -165,4 +164,18 @@ kubectl -n live get all
 
 ```bash
 kubectl delete ns live
+```
+
+### AKS törlése
+
+1. AKS erőforrás törlése
+
+```bash
+az aks delete --resource-group mentor-aks --name mentoraks --yes
+```
+
+1. AKS erőforráscsoport törlése
+
+```bash
+az group delete --name mentor-aks --location northeurope -f -y --no-wait
 ```
