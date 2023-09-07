@@ -91,7 +91,6 @@ kubectl config current-context
 kubectl config use-context mentoraks
 ```
 
-
 ## Alkalmazás létrehozás
 
 ### Névtér létrehozás
@@ -109,7 +108,7 @@ kubectl config set-context --current --namespace=live
 ## Node-WebApp alkalmazás létrehozása
 
 ```
-kubectl apply -f aks/live.yaml --namespace live
+kubectl apply -f https://raw.githubusercontent.com/cloudsteak/trn-k8s/main/aks/node-webapp.yaml --namespace live
 ```
 
 ### Monitoring engedélyezése

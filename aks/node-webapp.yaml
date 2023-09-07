@@ -16,7 +16,7 @@ spec:
         app: node-webapp-app
     spec:
       containers:
-        - image: mentoracr.azurecr.io/node-webapp-docker:latest
+        - image: mentoracr.azurecr.io/node-webapp:latest
           name: node-webapp
           ports:
             - containerPort: 8080
